@@ -1,4 +1,4 @@
-/// <reference types="office-js">
+/// <reference types="office-js" />
 
 console.log(" Executing taskpane!!!")
 
