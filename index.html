@@ -1,31 +1,79 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Doco Task Pane Add-in</title>
 
     <!-- Office JavaScript API -->
-    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <script
+      type="text/javascript"
+      src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
+    ></script>
 
     <!-- Template styles -->
     <style>
-        body {
-            font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
-            font-size: 14px;
-            margin: 0;
-            padding: 10px;
-        }
-    </style>
-</head>
+      .card {
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        padding: 14px;
+        background: #ffffff;
+      }
 
-<body class="">
+      .title {
+        margin: 0;
+      }
+
+      .subtitle {
+        margin: 6px 0 12px;
+        color: black;
+        font-size: 13px;
+      }
+
+      .primary-btn {
+        background: red;
+        width: 100%;
+        border: 0;
+        color: white;
+        cursor: pointer;
+        padding: 12px 14px;
+        border-radius: 10px;
+      }
+
+      .primary-btn :hover {
+        transform: translateY(1px);
+      }
+
+      .status {
+        margin-top: 12px;
+        padding-top: 10px;
+      }
+
+      .status-label {
+        font-size: 12px;
+        color: #667;
+      }
+
+      .status-text {
+        margin-top: 6px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+
+  <body class="">
     <main id="app-body">
-        <h1>Doco Challenge</h1>
+      <div class="card">
+        <h1 class="title">Doco Challenge</h1>
+        <p class="subtitle">Connect to word to check!!</p>
+        <button id="run-btn" class="primary-btn">Connect</button>
+
+        <div class="status">
+          <div class="status-label">Status</div>
+          <div id="status-text" class="status-text">Idle</div>
+        </div>
+      </div>
     </main>
     <script type="text/javascript" src="taskpane.js"></script>
-</body>
-
+  </body>
 </html>
