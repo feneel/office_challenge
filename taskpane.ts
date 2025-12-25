@@ -20,11 +20,18 @@ function wireClick() {
             return;
         }
 
+        const canUseTracking = Office.context.requirements.isSetSupported("WordApi", "1.5")
+        setStatus(`Connecting to Word.. Tracking: ${canUseTracking ? "Yes" : "No"}`)
+
         try {
             setStatus("Connecting to Word....")
 
 
             await Word.run(async (context) => {
+
+                if (canUseTracking) {
+                    context.document.changeTrackingMode = Word.ChangeTrackingMode.trackAll
+                }
 
                 const body = context.document.body
                 body.load("text")
