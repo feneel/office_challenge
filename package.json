@@ -7,14 +7,12 @@
     "dev_server_port": 3000
   },
   "scripts": {
-    "start": "concurrently \"npm run watch\" \"npm run dev-server\" \"office-addin-debugging start manifest.xml\"",
-    "dev-server": "http-server -S -C localhost.crt -K localhost.key --cors . -p 3000",
-    "watch": "tsc -w",
-    "build": "tsc",
-    "stop": "office-addin-debugging stop manifest.xml",
-    "validate": "office-addin-manifest validate manifest.xml"
-  },
-  "dependencies": {},
+  "dev": "vite",
+  "build": "vite build",
+  "start": "concurrently \"npm run dev\" \"office-addin-debugging start manifest.xml\"",
+  "stop": "office-addin-debugging stop manifest.xml",
+  "validate": "office-addin-manifest validate manifest.xml"
+},
   "devDependencies": {
     "@types/office-js": "^1.0.377",
     "concurrently": "^8.2.2",
@@ -22,6 +20,10 @@
     "office-addin-debugging": "^5.1.6",
     "office-addin-dev-certs": "^1.13.5",
     "office-addin-manifest": "^1.13.6",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.2",
+    "vite": "^7.3.0"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security"
   }
 }
