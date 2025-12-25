@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "concurrently \"npm run watch\" \"npm run dev-server\" \"office-addin-debugging start manifest.xml\"",
-    "dev-server": "http-server -S --cors . -p 3000",
+    "dev-server": "http-server -S -C localhost.crt -K localhost.key --cors . -p 3000",
     "watch": "tsc -w",
     "build": "tsc",
     "stop": "office-addin-debugging stop manifest.xml",
