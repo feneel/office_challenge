@@ -13,6 +13,10 @@ type RedactionCounts = {
   emails: number,
   phones: number,
   ssns: number,
+  creditCard: number,
+  dobs: number,
+  ids: number,
+  ssnLast4: number,
   total: number
 }
 
@@ -29,7 +33,6 @@ function extractUniqueMatches(text: string, re: RegExp): string[] {
     const hit = (m[0] || "").trim()
 
     if (!hit) continue;
-
 
     if (hit.includes("🀫") || hit.toLowerCase().includes("redacted")) continue
 
@@ -92,31 +95,72 @@ async function redactSensitiveInfo(context: Word.RequestContext): Promise<Redact
 
   const emailRe = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi;
 
-  const phoneRe =   /\b(?:\+?1[\s\u00A0().\-‐-‒–—]*)?(?:\(?\d{3}\)?[\s\u00A0().\-‐-‒–—]*)\d{3}[\s\u00A0().\-‐-‒–—]*\d{4}\b/g;
+  const phoneRe = /\b(?:\+?1[\s\u00A0().\-‐-‒–—]*)?(?:\(?\d{3}\)?[\s\u00A0().\-‐-‒–—]*)\d{3}[\s\u00A0().\-‐-‒–—]*\d{4}\b/g;
 
   const ssnRe = /\b\d{3}[- ]\d{2}[- ]\d{4}\b/g;
 
 
+  const dobRe =
+    /\b(?:0?[1-9]|1[0-2])[\/-](?:0?[1-9]|[12]\d|3[01])[\/-](?:19|20)\d{2}\b/g;
+
+  const idRe = /\b(?:EMP-\d{4}-\d{3,}|MRN-\d+|INS-\d+)\b/g;
+
+  const ccStrictRe = /\b(?:\d{4}[- \u00A0‐‒–—]?){3}\d{4}\b/g;
+
+  const ssnLast4Re = /\b(?:ssn|social security number)[^0-9]{0,40}(\d{4})\b/gi;
+
   const emails = extractUniqueMatches(text, emailRe)
   const phones = extractUniqueMatches(text, phoneRe)
   const ssns = extractUniqueMatches(text, ssnRe)
+  const dobs = extractUniqueMatches(text, dobRe);
+  const ids = extractUniqueMatches(text, idRe);
 
 
-    setStatus(`Found matches: emails=${emails.length}, phones=${phones.length}, ssns=${ssns.length}`);
+  const creditCards = extractUniqueMatches(text, ccStrictRe).filter((s) => {
+    const digits = s.replace(/[^\d]/g, "");
+    return digits.length === 16;
+  });
+
+  const ssnLast4Matches = extractUniqueMatches(text, ssnLast4Re).map((m) =>
+    m.replace(/[^\d]/g, "").slice(-4)
+  );
+
+  setStatus(`Found matches: emails=${emails.length}, phones=${phones.length}, ssns=${ssns.length}, cc=${creditCards.length}, dob=${dobs.length}, ids=${ids.length}, ssn4=${ssnLast4Matches.length}`)
 
 
-  const counts: RedactionCounts = { emails: 0, phones: 0, ssns: 0, total: 0 }
-
+  const counts: RedactionCounts = {
+    emails: 0,
+    phones: 0,
+    ssns: 0,
+    creditCard: 0,
+    dobs: 0,
+    ids: 0,
+    ssnLast4: 0,
+    total: 0,
+  };
   for (const e of emails) counts.emails += await replaceAllOccurrences(context, body, e, REDACTION_MARK)
   for (const p of phones) counts.phones += await replaceAllOccurrences(context, body, p, REDACTION_MARK)
   for (const s of ssns) counts.ssns += await replaceAllOccurrences(context, body, s, REDACTION_MARK)
+  for (const c of creditCards) counts.creditCard += await replaceAllOccurrences(context, body, c, REDACTION_MARK);
+  for (const d of dobs) counts.dobs += await replaceAllOccurrences(context, body, d, REDACTION_MARK);
+  for (const i of ids) counts.ids += await replaceAllOccurrences(context, body, i, REDACTION_MARK);
+  for (const last4 of ssnLast4Matches) {
+    if (last4.length === 4) counts.ssnLast4 += await replaceAllOccurrences(context, body, last4, REDACTION_MARK);
+  }
 
 
-  counts.total = counts.emails + counts.phones + counts.ssns
+  counts.total =
+    counts.emails +
+    counts.phones +
+    counts.ssns +
+    counts.creditCard +
+    counts.dobs +
+    counts.ids +
+    counts.ssnLast4;
 
 
-  await context.sync()
-  return counts
+  await context.sync();
+  return counts;
 
 }
 
@@ -181,7 +225,7 @@ function wireClick() {
 
         const headerAdded = await addConfidentialHeader(context);
 
-        const redactions= await redactSensitiveInfo(context)
+        const redactions = await redactSensitiveInfo(context);
 
 
         const body = context.document.body;
@@ -212,5 +256,5 @@ function wireClick() {
 
 document.addEventListener("DOMContentLoaded", () => {
   wireClick();
-  setStatus("Ready. Click Connect!!");
+  setStatus("Ready. Click Redact!!");
 });
