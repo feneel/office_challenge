@@ -236,12 +236,9 @@ function wireClick() {
         const preview = text.slice(0, 120);
 
         setStatus(
-          `Done. Track Changes: ${canUseTracking ? "ON" : "OFF"} | Header: ${headerAdded ? "added" : "already present"
-          } | 
+          `Done. Track Changes: ${canUseTracking ? "ON" : "OFF"} | 
           `+ 
-          `Redacted: ${redactions.total} (Emails ${redactions.emails}, Phones: ${redactions.phones}, SSNs: ${redactions.ssns})`+
-          
-          `Preview: "${preview}${text.length > 120 ? "…" : ""}"`
+          `Redacted: ${redactions.total} (Emails ${redactions.emails}, Phones: ${redactions.phones}, SSNs: ${redactions.ssns})`          
         );
       });
     } catch (e) {
