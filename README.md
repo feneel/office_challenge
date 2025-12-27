@@ -47,6 +47,10 @@ All header insertion and redactions occur after enabling tracking (when supporte
 ```bash
 npm install
 ```
+Install certificates
+```bash
+npm run certs
+```
 
 Start
 ```bash
