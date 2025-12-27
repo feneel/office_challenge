@@ -9,6 +9,7 @@
   "scripts": {
   "dev": "vite",
   "build": "vite build",
+  "certs": "office-addin-dev-certs install",
   "start": "concurrently \"npm run dev\" \"office-addin-debugging start manifest.xml\"",
   "stop": "office-addin-debugging stop manifest.xml",
   "validate": "office-addin-manifest validate manifest.xml"

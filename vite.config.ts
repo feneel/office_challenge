@@ -1,18 +1,23 @@
 import { defineConfig } from "vite";
-import fs from "fs";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
-export default defineConfig({
-  server: {
-    host: "127.0.0.1",
-    port: 3000,
-    strictPort: true,
-    https: {
-      key: fs.readFileSync("./localhost.key"),
-      cert: fs.readFileSync("./localhost.crt"),
+export default defineConfig(() => {
+  const devCertDir = path.join(os.homedir(), ".office-addin-dev-certs");
+  const keyPath = path.join(devCertDir, "localhost.key");
+  const certPath = path.join(devCertDir, "localhost.crt");
+
+  const https = {
+    key: fs.readFileSync(keyPath),
+    cert: fs.readFileSync(certPath),
+  };
+
+  return {
+    server: {
+      https,
+      port: 3000,
+      strictPort: true,
     },
-  },
-  build: {
-    outDir: "dist",
-    emptyOutDir: true,
-  },
+  };
 });
